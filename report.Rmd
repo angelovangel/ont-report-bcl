@@ -7,17 +7,10 @@ output:
   toc: no
   css: custom.css
 params:
- author:
-  label: "Author"
-  value: ""
-  input: text
  path:
-  label: "Path to folder with fastq files (required, absolute path or relative to current folder)"
-  value: "/path/to/testdata"
+  label: "Path to ONT run folder (required, absolute path or relative to current folder)"
+  value: "/path/to/folder"
   input: text
- regex:
-  label: "Regex to capture fastq files (and obtain sample names)"
-  value: "fast(q|q.gz)$"
  sequencer:
   label: "Sequencing platform"
   choices: ["MinION", "GridION", "PromethION"]
@@ -38,13 +31,13 @@ knitr::opts_chunk$set(include = FALSE,
 require(stringr)
 require(knitr)
 require(DT)
-require(kableExtra)
+#require(kableExtra)
 require(dplyr)
 require(parallel)
 
 
 fastqdir <- normalizePath(params$path)
-fastqfiles <- list.files(fastqdir, pattern = params$fastq_pattern, full.names = TRUE, recursive = T)
+fastqfiles <- list.files(fastqdir, pattern = "fast(q|q.gz)$", full.names = TRUE, recursive = params$recursive)
 names(fastqfiles) <- basename(fastqfiles)
 numcores <- ifelse(parallel::detectCores() > 2, parallel::detectCores(), 2)
 
