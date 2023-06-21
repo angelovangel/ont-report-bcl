@@ -11,15 +11,9 @@ params:
   label: "Path to ONT run folder (required, absolute path or relative to current folder)"
   value: "/path/to/folder"
   input: text
- sequencer:
-  label: "Sequencing platform"
-  choices: ["MinION", "GridION", "PromethION"]
-  value: "PromethION"
-  input: select
-   
 ---
 
-Report generated on `r Sys.time()`. All fastq data is calculated with the [faster](https://github.com/angelovangel/faster) and [fastkmers](https://github.com/angelovangel/fastkmers) programs. 
+Report generated at TGS/KAUST Core Laboratories, `r Sys.time()`
 
 
 ```{r setup, include=FALSE}
@@ -36,8 +30,11 @@ require(dplyr)
 require(parallel)
 
 
-fastqdir <- normalizePath(params$path)
-fastqfiles <- list.files(fastqdir, pattern = "fast(q|q.gz)$", full.names = TRUE, recursive = params$recursive)
+rundir <- normalizePath(params$path)
+fastqfiles <- list.files(paste0(rundir, '/fastq_pass'), 
+                         pattern = "fast(q|q.gz)$", 
+                         full.names = TRUE, 
+                         recursive = params$recursive)
 names(fastqfiles) <- basename(fastqfiles)
 numcores <- ifelse(parallel::detectCores() > 2, parallel::detectCores(), 2)
 
@@ -68,7 +65,7 @@ df <- stats %>%
 
 
 # 
-write.csv(df, file = "stats.csv", row.names = FALSE)
+write.csv(df, file = "report.csv", row.names = FALSE)
 
 # get some summary data
 num_files <- length(fastqfiles)

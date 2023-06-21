@@ -10,8 +10,8 @@
 # - report.html - report containing metadata from final_summary, sequencing summary and fastq files
 #
 # Requirements:
-# https://github.com/angelovangel/faster2
-# R libraries loaded in report.Rmd
+# - https://github.com/angelovangel/faster2
+# - R libraries loaded in report.Rmd
 #============
 
 
@@ -22,9 +22,6 @@ option_list <- list(
   make_option(c('--path', '-p'), 
               help = 'path to run folder [%default]', 
               type = 'character', default = NULL),
-  make_option(c('--sequencer', '-s'), 
-              help = "seq platform used, can be one of 'min', 'grid' or 'prom' [%default]", 
-              default = 'prom'),
   make_option(c('--outfile','-o'), 
               help = 'name of output report file [%default]', 
               type = 'character', default = 'report.html')
@@ -41,15 +38,7 @@ if (is.null(opts$path)){
 }
 
 
-# change to match parameter used in Rmd
 
-if (opts$sequencer == 'min') {
-  opts$sequencer <- 'MinION'
-} else if (opts$sequencer == 'grid') {
-  opts$sequencer <- 'GridION'
-} else if(opts$sequencer == 'prom') {
-  opts$sequencer <- 'PromethION'
-}
 
 # render the rmarkdown, using fastq-report.Rmd as template
 rmarkdown::render(input = "report.Rmd",
@@ -57,7 +46,6 @@ rmarkdown::render(input = "report.Rmd",
                   output_dir = getwd(), # important when knitting in docker
                   knit_root_dir = getwd(), # important when knitting in docker
                   params = list(
-                    path = opts$path,
-                    sequencer = opts$sequencer
+                    path = opts$path
                   )
 )
